@@ -12,9 +12,12 @@ type (
 	RunePred func(rune) bool
 )
 
-type Lexer struct {
-	rs        io.RuneScanner
+type Config struct {
 	predFuncs []predFunc
+}
+
+func (c *Config) Install(p RunePred, f LexFunc) {
+	c.predFuncs = append(c.predFuncs, predFunc{p, f})
 }
 
 type predFunc struct {
@@ -22,14 +25,16 @@ type predFunc struct {
 	f LexFunc
 }
 
-func New(rs io.RuneScanner) *Lexer {
-	return &Lexer{
-		rs: rs,
-	}
+type Lexer struct {
+	rs io.RuneScanner
+	c  *Config
 }
 
-func (l *Lexer) Install(p RunePred, f LexFunc) {
-	l.predFuncs = append(l.predFuncs, predFunc{p, f})
+func New(rs io.RuneScanner, c *Config) *Lexer {
+	return &Lexer{
+		rs: rs,
+		c:  c,
+	}
 }
 
 func (l *Lexer) Next() (string, error) {
@@ -40,7 +45,7 @@ loop:
 			return "", err
 		}
 		l.rs.UnreadRune()
-		for _, pf := range l.predFuncs {
+		for _, pf := range l.c.predFuncs {
 			if pf.p(r) {
 				s, err := pf.f(l.rs)
 				if err != nil {

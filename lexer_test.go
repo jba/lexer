@@ -18,15 +18,17 @@ func Test(t *testing.T) {
 		"The", "20", "quick", "-", "foxes", "ran", ">=", "the", "(", "big", "dogs", ")", ".", "<=",
 	}
 
-	l := lexer.New(strings.NewReader(in))
-	l.Install(unicode.IsSpace, lexer.SkipWhile(unicode.IsSpace))
-	l.Install(unicode.IsLetter, lexer.ReadWhile(isIdent))
-	l.Install(unicode.IsDigit, lexer.ReadWhile(unicode.IsDigit))
+	var c lexer.Config
+	c.Install(unicode.IsSpace, lexer.SkipWhile(unicode.IsSpace))
+	c.Install(unicode.IsLetter, lexer.ReadWhile(isIdent))
+	c.Install(unicode.IsDigit, lexer.ReadWhile(unicode.IsDigit))
 	for _, r := range "+-().," {
-		l.Install(lexer.IsRune(r), lexer.ReadRune(r))
+		c.Install(lexer.IsRune(r), lexer.ReadRune(r))
 	}
-	l.Install(lexer.IsRune('>'), lexer.ReadOneOrTwo('='))
-	l.Install(lexer.IsRune('<'), lexer.ReadOneOrTwo('='))
+	c.Install(lexer.IsRune('>'), lexer.ReadOneOrTwo('='))
+	c.Install(lexer.IsRune('<'), lexer.ReadOneOrTwo('='))
+
+	l := lexer.New(strings.NewReader(in), &c)
 
 	var got []string
 	for {
