@@ -13,9 +13,9 @@ import (
 )
 
 func Test(t *testing.T) {
-	in := "The 20 quick-foxes ran >=the (big dogs).<="
+	in := "The 20 quick-foxes ran >=the (big dogs).<= yes"
 	want := []string{
-		"The", "20", "quick", "-", "foxes", "ran", ">=", "the", "(", "big", "dogs", ")", ".", "<=",
+		"The", "20", "quick", "-", "foxes", "ran", ">=", "the", "(", "big", "dogs", ")", ".", "<=", "yes",
 	}
 
 	var c lexer.Config

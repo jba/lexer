@@ -108,10 +108,10 @@ func readWhile(rs io.RuneScanner, p RunePred) (string, error) {
 
 	for {
 		r, _, err := rs.ReadRune()
-		if err != nil {
+		if err != nil && err != io.EOF {
 			return "", err
 		}
-		if !p(r) {
+		if err == io.EOF || !p(r) {
 			rs.UnreadRune()
 			return string(s), nil
 		}
