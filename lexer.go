@@ -143,7 +143,7 @@ func ReadOneOrTwo(r rune) LexFunc {
 		r2, _, err := rs.ReadRune()
 		if r != r2 {
 			rs.UnreadRune()
-			return string(r), nil
+			return string(r1), nil
 		}
 		if err != nil {
 			return "", err
